@@ -12,6 +12,7 @@ authors = [
     { name = "Yankee Maharjan" },
 ]
 description = "AI generated commit messages!"
+readme = "README.md"
 keywords = ["ai commit", "commit ai", "ai generated commit", "llm commit", "generative ai commit"]
 requires-python = ">=3.10"
 classifiers = [
