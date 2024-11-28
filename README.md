@@ -56,6 +56,16 @@ then enable remote mode:
 aic -r
 ```
 
+Specify the model to use based on the provider's API key:
+
+```sh
+# For OpenAI
+aic -r -m "gpt-4o-2024-11-20"
+
+# For Gemini
+aic -r -m "gemini-1.5-flash"
+```
+
 ## Getting Help
 
 ```sh
