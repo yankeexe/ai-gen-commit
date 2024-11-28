@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 include = ["ai_commit"]
 
 [project]
-name = "ai_commit"
+name = "ai-gen-commit"
 version = "0.0.1"
 authors = [
     { name = "Yankee Maharjan" },
