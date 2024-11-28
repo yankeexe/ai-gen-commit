@@ -187,17 +187,16 @@ def interaction_loop(staged_changes: str):
 
 def run():
     try:
-        if not run_command(commands["is_git_repo"]):
-            print("\n\n🐙 Not a git repo.")
-            sys.exit(1)
-
+        run_command(commands["is_git_repo"]):
         staged_changes = run_command(commands["get_stashed_changes"])
-        if args.debug:
-            print(staged_changes)
-            print("-" * 50)
+
         if not staged_changes:
             print("\n🗂️ No staged changes")
             sys.exit(1)
+
+        if args.debug:
+            print(staged_changes)
+            print("-" * 50)
 
         interaction_loop(staged_changes)
     except KeyboardInterrupt:
