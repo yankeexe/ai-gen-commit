@@ -14,6 +14,11 @@ Use AI to generate commit message for your staged changes.
 - Regenerate commit messages until you find the perfect one
 - Simple CLI interface with debug mode
 
+## ⚡️ Install
+
+```sh
+pip install ai-gen-commit
+```
 
 ## ✨ Generate Commit messages
 
