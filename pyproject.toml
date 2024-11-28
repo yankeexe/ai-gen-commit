@@ -6,33 +6,13 @@ build-backend = "setuptools.build_meta"
 include = ["ai_commit"]
 
 [project]
-name = "ai-gen-commit"
+name = "ai_commit"
 version = "0.0.1"
-authors = [
-    { name = "Yankee Maharjan" },
-]
 description = "AI generated commit messages!"
-readme = "README.md"
-keywords = ["ai commit", "commit ai", "ai generated commit", "llm commit", "generative ai commit"]
-requires-python = ">=3.10"
-classifiers = [
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Intended Audience :: Developers",
-    "Development Status :: 3 - Alpha",
-]
+
 dependencies = [
     "ollama==0.3.3",
-    "openai==1.55.1"
 ]
-
-[project.optional-dependencies]
-dev = [
-    "ruff==0.7.4"
-]
-
-[project.urls]
-Repository = "https://github.com/yankeexe/ai-gen-commit"
 
 [project.scripts]
-aic = "ai_commit.app:run"
+ai-commit = "ai_commit.app:run"
