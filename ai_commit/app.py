@@ -81,9 +81,13 @@ def run_command(command: list[str] | str, extra_args: list[str] = []):
 
 
 def generate_commit_message_local_model(staged_changes: str):
+    model_name = get_model()
+    if args.debug:
+        print(f">>> Using Ollama with {model_name}")
+
     try:
         stream = ollama.chat(
-            model=get_model(),
+            model=model_name,
             messages=[
                 {"role": "system", "content": system_prompt},
                 {
@@ -113,17 +117,21 @@ def generate_commit_message_local_model(staged_changes: str):
 def generate_commit_message_remote_model(staged_changes: str):
     api_key = get_api_key()
     if api_key.startswith("sk-"):
-        model = "gpt-4o"
+        model_name = args.model or "gpt-4o"
         base_url = None
+        if args.debug:
+            print(f">>> Using OpenAI with {model_name}")
 
     else:
-        model = "gemini-1.5-pro"
+        model_name = args.model or "gemini-1.5-pro"
         base_url = "https://generativelanguage.googleapis.com/v1beta/openai/"
+        if args.debug:
+            print(f">>> Using Gemini with {model_name}")
 
     try:
         client = OpenAI(base_url=base_url)
         stream = client.chat.completions.create(
-            model=args.model or model,
+            model=model_name,
             messages=[
                 {"role": "system", "content": system_prompt},
                 {
