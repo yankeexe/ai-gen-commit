@@ -22,6 +22,12 @@ classifiers = [
 ]
 dependencies = [
     "ollama==0.3.3",
+    "openai==1.55.1"
+]
+
+[project.optional-dependencies]
+dev = [
+    "ruff==0.7.4"
 ]
 
 [project.urls]
