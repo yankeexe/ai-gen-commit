@@ -123,7 +123,7 @@ def generate_commit_message_remote_model(staged_changes: str):
     try:
         client = OpenAI(base_url=base_url)
         stream = client.chat.completions.create(
-            model=model,
+            model=args.model or model,
             messages=[
                 {"role": "system", "content": system_prompt},
                 {
