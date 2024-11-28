@@ -187,7 +187,7 @@ def interaction_loop(staged_changes: str):
 
 def run():
     try:
-        run_command(commands["is_git_repo"]):
+        run_command(commands["is_git_repo"])
         staged_changes = run_command(commands["get_stashed_changes"])
 
         if not staged_changes:
