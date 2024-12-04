@@ -177,7 +177,7 @@ def interaction_loop(staged_changes: str):
 
         match action:
             case "r" | "regenerate":
-                subprocess.run(commands["clear_screen"])
+                subprocess.run(commands["clear_screen"], shell=True)
                 continue
             case "y" | "yes":
                 print("committing...")
