@@ -87,6 +87,7 @@ def run_command(command: list[str] | str, extra_args: list[str] = []):
         sys.exit(1)
 
 
+# Source: https://github.com/ollama/ollama-python/blob/e956a331e8f5585c0fa70fa56d222c3b83844271/ollama/_client.py#L1145
 def parse_host(host: Optional[str] = None) -> str:
     host, port = host or '', 11434
     scheme, _, hostport = host.partition('://')
@@ -114,7 +115,7 @@ def parse_host(host: Optional[str] = None) -> str:
     return f'{scheme}://{host}:{port}'
 
 
-def generate_commit_message_remote_model(staged_changes: str, remote: bool = False) -> str:
+def generate_commit_message(staged_changes: str, remote: bool = False) -> str:
     api_key: str = get_api_key(remote)
     base_url: str = ""
     model_name: str = ""
@@ -133,7 +134,7 @@ def generate_commit_message_remote_model(staged_changes: str, remote: bool = Fal
                 print(f">>> Using Gemini with {model_name}")
     else:
         model_name = get_model()
-        base_url = parse_host()
+        base_url = parse_host(os.getenv("OLLAMA_HOST")) + "/v1"
 
         if args.debug:
             print(f">>> Using Ollama with {model_name}")
@@ -171,7 +172,7 @@ def generate_commit_message_remote_model(staged_changes: str, remote: bool = Fal
 
 def interaction_loop(staged_changes: str):
     while True:
-        commit_message = generate_commit_message_remote_model(staged_changes, args.remote)
+        commit_message = generate_commit_message(staged_changes, args.remote)
 
         action = input("\n\nProceed to commit? [y(yes) | n[no] | r(regenerate)] ")
 
