@@ -2,7 +2,6 @@ import ipaddress
 import os
 import subprocess
 import sys
-from typing import Optional
 import urllib
 
 from openai import OpenAI
