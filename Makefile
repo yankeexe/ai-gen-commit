@@ -10,7 +10,7 @@ check: # Ruff check
 	@echo "✅ Check complete!"
 
 fix: # Fix auto-fixable linting issues
-	@ruff check app.py --fix
+	@ruff check ai_commit --fix
 
 clean: # Clean temporary files
 	@rm -rf __pycache__ .pytest_cache
