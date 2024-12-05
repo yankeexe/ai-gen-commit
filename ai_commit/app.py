@@ -116,9 +116,9 @@ def parse_host(host: Optional[str] = None) -> str:
 
 
 def generate_commit_message(staged_changes: str, remote: bool = False) -> str:
-    api_key: str = get_api_key(remote)
-    base_url: str = ""
-    model_name: str = ""
+    api_key = get_api_key(remote)
+    base_url = ""
+    model_name = ""
 
     if api_key != "ollama":
         if api_key.startswith("sk-"):
@@ -156,7 +156,7 @@ def generate_commit_message(staged_changes: str, remote: bool = False) -> str:
 
         print("✨ Generating commit message...")
         print("-" * 50 + "\n")
-        commit_message: str = ""
+        commit_message = ""
 
         for chunk in stream:
             content = chunk.choices[0].delta.content
