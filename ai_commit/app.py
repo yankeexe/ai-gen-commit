@@ -1,8 +1,10 @@
+import ipaddress
 import os
 import subprocess
 import sys
+from typing import Optional
+import urllib
 
-import ollama
 from openai import OpenAI
 
 from ai_commit import args
@@ -16,12 +18,16 @@ commands = {
 }
 
 
-def get_api_key() -> str:
-    """Check if API keys are set in environment variables.
+def get_api_key(remote: bool = False) -> str:
+    """Check if API keys are set in environment variables for remote models.
+    If the model is run locally (via Ollama), then the 'ollama' key is returned back.
 
     Returns:
         bool: True if OPENAI_API_KEY environment variable is set, False otherwise.
     """
+    if not remote:
+        return "ollama"
+
     api_key = os.environ.get("OPENAI_API_KEY")
     if not api_key:
         print(
@@ -73,6 +79,7 @@ def run_command(command: list[str] | str, extra_args: list[str] = []):
             text=True,
             check=True,
             timeout=10,
+            encoding="utf-8"
         )
         return result.stdout
     except subprocess.CalledProcessError as e:
@@ -80,56 +87,60 @@ def run_command(command: list[str] | str, extra_args: list[str] = []):
         sys.exit(1)
 
 
-def generate_commit_message_local_model(staged_changes: str):
-    model_name = get_model()
-    if args.debug:
-        print(f">>> Using Ollama with {model_name}")
+# Source: https://github.com/ollama/ollama-python/blob/e956a331e8f5585c0fa70fa56d222c3b83844271/ollama/_client.py#L1145
+def parse_host(host: Optional[str] = None) -> str:
+    host, port = host or '', 11434
+    scheme, _, hostport = host.partition('://')
+    if not hostport:
+        scheme, hostport = 'http', host
+    elif scheme == 'http':
+        port = 80
+    elif scheme == 'https':
+        port = 443
 
+    split = urllib.parse.urlsplit('://'.join([scheme, hostport]))
+    host = split.hostname or '127.0.0.1'
+    port = split.port or port
+
+    # Fix missing square brackets for IPv6 from urlsplit
     try:
-        stream = ollama.chat(
-            model=model_name,
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {
-                    "role": "user",
-                    "content": f"Here are the staged changes '''{staged_changes}'''",
-                },
-            ],
-            stream=True,
-            options={"temperature": 0},
-        )
+        if isinstance(ipaddress.ip_address(host), ipaddress.IPv6Address):
+            host = f"[{host}]"
+    except ValueError:
+        ...
 
-        print("✨ Generating commit message...")
-        print("-" * 50 + "\n")
-        commit_message = ""
-        for chunk in stream:
-            if chunk["done"] is False:
-                content = chunk["message"]["content"]
-                print(content, end="", flush=True)
-                commit_message += content
+    if path := split.path.strip('/'):
+        return f'{scheme}://{host}:{port}/{path}'
 
-        return commit_message
-    except Exception as e:
-        print(f"❌ Error generating commit message: {str(e)}")
-        sys.exit(1)
+    return f'{scheme}://{host}:{port}'
 
 
-def generate_commit_message_remote_model(staged_changes: str):
-    api_key = get_api_key()
-    if api_key.startswith("sk-"):
-        model_name = args.model or "gpt-4o"
-        base_url = None
-        if args.debug:
-            print(f">>> Using OpenAI with {model_name}")
+def generate_commit_message(staged_changes: str, remote: bool = False) -> str:
+    api_key: str = get_api_key(remote)
+    base_url: str = ""
+    model_name: str = ""
 
+    if api_key != "ollama":
+        if api_key.startswith("sk-"):
+            model_name = args.model or "gpt-4o"
+            base_url = None
+            if args.debug:
+                print(f">>> Using OpenAI with {model_name}")
+
+        else:
+            model_name = args.model or "gemini-1.5-pro"
+            base_url = "https://generativelanguage.googleapis.com/v1beta/openai/"
+            if args.debug:
+                print(f">>> Using Gemini with {model_name}")
     else:
-        model_name = args.model or "gemini-1.5-pro"
-        base_url = "https://generativelanguage.googleapis.com/v1beta/openai/"
+        model_name = get_model()
+        base_url = parse_host(os.getenv("OLLAMA_HOST")) + "/v1"
+
         if args.debug:
-            print(f">>> Using Gemini with {model_name}")
+            print(f">>> Using Ollama with {model_name}")
 
     try:
-        client = OpenAI(base_url=base_url)
+        client = OpenAI(base_url=base_url, api_key=api_key)
         stream = client.chat.completions.create(
             model=model_name,
             messages=[
@@ -145,7 +156,8 @@ def generate_commit_message_remote_model(staged_changes: str):
 
         print("✨ Generating commit message...")
         print("-" * 50 + "\n")
-        commit_message = ""
+        commit_message: str = ""
+
         for chunk in stream:
             content = chunk.choices[0].delta.content
             if content:
@@ -160,16 +172,13 @@ def generate_commit_message_remote_model(staged_changes: str):
 
 def interaction_loop(staged_changes: str):
     while True:
-        if args.remote:
-            commit_message = generate_commit_message_remote_model(staged_changes)
-        else:
-            commit_message = generate_commit_message_local_model(staged_changes)
+        commit_message = generate_commit_message(staged_changes, args.remote)
 
         action = input("\n\nProceed to commit? [y(yes) | n[no] | r(regenerate)] ")
 
         match action:
             case "r" | "regenerate":
-                subprocess.run(commands["clear_screen"])
+                subprocess.run(commands["clear_screen"], shell=True)
                 continue
             case "y" | "yes":
                 print("committing...")
