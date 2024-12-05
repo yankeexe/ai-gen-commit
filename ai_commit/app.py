@@ -87,19 +87,38 @@ def run_command(command: list[str] | str, extra_args: list[str] = []):
         sys.exit(1)
 
 
-# Source: https://github.com/ollama/ollama-python/blob/e956a331e8f5585c0fa70fa56d222c3b83844271/ollama/_client.py#L1145
-def parse_host(host: Optional[str] = None) -> str:
-    host, port = host or '', 11434
-    scheme, _, hostport = host.partition('://')
+
+def parse_host(host: str | None = None) -> str:
+    """Parses a host string into a fully qualified URL.
+
+    Handles parsing of scheme, hostname, port and path components from the input host string.
+    Defaults to http://127.0.0.1:11434 if no host is provided.
+
+    Args:
+        host: Optional host string to parse. Can include scheme, hostname, port and path.
+            Examples:
+            - "localhost"
+            - "http://localhost"
+            - "https://example.com:8080/path"
+            - None (defaults to localhost)
+
+    Returns:
+        str: Fully qualified URL string in format: scheme://host:port/path
+            IPv6 addresses are properly wrapped in square brackets.
+
+    Source: https://github.com/ollama/ollama-python/blob/e956a331e8f5585c0fa70fa56d222c3b83844271/ollama/_client.py#L1145
+    """
+    host, port = host or "", 11434
+    scheme, _, hostport = host.partition("://")
     if not hostport:
-        scheme, hostport = 'http', host
-    elif scheme == 'http':
+        scheme, hostport = "http", host
+    elif scheme == "http":
         port = 80
-    elif scheme == 'https':
+    elif scheme == "https":
         port = 443
 
-    split = urllib.parse.urlsplit('://'.join([scheme, hostport]))
-    host = split.hostname or '127.0.0.1'
+    split = urllib.parse.urlsplit("://".join([scheme, hostport]))
+    host = split.hostname or "127.0.0.1"
     port = split.port or port
 
     # Fix missing square brackets for IPv6 from urlsplit
@@ -175,6 +194,7 @@ def interaction_loop(staged_changes: str):
         commit_message = generate_commit_message(staged_changes, args.remote)
 
         action = input("\n\nProceed to commit? [y(yes) | n[no] | r(regenerate)] ")
+        action = action.strip()
 
         match action:
             case "r" | "regenerate":
