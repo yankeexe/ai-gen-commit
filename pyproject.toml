@@ -22,7 +22,6 @@ classifiers = [
     "Development Status :: 3 - Alpha",
 ]
 dependencies = [
-    "ollama==0.3.3",
     "openai==1.55.1"
 ]
 
