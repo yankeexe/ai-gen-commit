@@ -3,6 +3,7 @@ import os
 import subprocess
 import sys
 import urllib
+from dataclasses import dataclass
 
 from openai import OpenAI
 
@@ -15,6 +16,13 @@ commands = {
     "commit": "git commit -m",
     "get_stashed_changes": "git diff --cached",
 }
+
+
+@dataclass
+class Provider:
+    name: str
+    model: str
+    base_url: str | None
 
 
 def get_api_key(remote: bool = False) -> str:
@@ -78,7 +86,7 @@ def run_command(command: list[str] | str, extra_args: list[str] = []):
             text=True,
             check=True,
             timeout=10,
-            encoding="utf-8"
+            encoding="utf-8",
         )
         return result.stdout
     except subprocess.CalledProcessError as e:
@@ -86,9 +94,8 @@ def run_command(command: list[str] | str, extra_args: list[str] = []):
         sys.exit(1)
 
 
-
 def parse_host(host: str | None = None) -> str:
-    """Parses a host string into a fully qualified URL.
+    """Parses a host string into a fully qualified URL for Ollama.
 
     Handles parsing of scheme, hostname, port and path components from the input host string.
     Defaults to http://127.0.0.1:11434 if no host is provided.
@@ -127,40 +134,49 @@ def parse_host(host: str | None = None) -> str:
     except ValueError:
         ...
 
-    if path := split.path.strip('/'):
-        return f'{scheme}://{host}:{port}/{path}'
+    if path := split.path.strip("/"):
+        return f"{scheme}://{host}:{port}/{path}"
 
-    return f'{scheme}://{host}:{port}'
+    return f"{scheme}://{host}:{port}"
+
+
+def get_llm_provider(remote: bool, api_key: str) -> Provider:
+    if not remote:
+        return Provider(
+            name="ollama",
+            model=get_model(),
+            base_url=parse_host(os.getenv("OLLAMA_HOST")) + "/v1",
+        )
+
+    if api_key.startswith("sk-"):
+        return Provider(name="openai", model=args.model or "gpt-4o")
+
+    if api_key.startswith("gsk_"):
+        return Provider(
+            name="groq",
+            model=args.model or "llama-3.2-3b-preview",
+            base_url="https://api.groq.com/openai/v1",
+        )
+
+    if api_key.startswith("AI"):
+        return Provider(
+            name="gemini",
+            model=args.model or "gemini-1.5-pro",
+            base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
+        )
 
 
 def generate_commit_message(staged_changes: str, remote: bool = False) -> str:
     api_key = get_api_key(remote)
-    base_url = ""
-    model_name = ""
+    provider = get_llm_provider(remote, api_key)
 
-    if api_key != "ollama":
-        if api_key.startswith("sk-"):
-            model_name = args.model or "gpt-4o"
-            base_url = None
-            if args.debug:
-                print(f">>> Using OpenAI with {model_name}")
-
-        else:
-            model_name = args.model or "gemini-1.5-pro"
-            base_url = "https://generativelanguage.googleapis.com/v1beta/openai/"
-            if args.debug:
-                print(f">>> Using Gemini with {model_name}")
-    else:
-        model_name = get_model()
-        base_url = parse_host(os.getenv("OLLAMA_HOST")) + "/v1"
-
-        if args.debug:
-            print(f">>> Using Ollama with {model_name}")
+    if args.debug:
+        print(f">>> Using {provider.name} with {provider.model}")
 
     try:
-        client = OpenAI(base_url=base_url, api_key=api_key)
+        client = OpenAI(base_url=provider.base_url, api_key=api_key)
         stream = client.chat.completions.create(
-            model=model_name,
+            model=provider.model,
             messages=[
                 {"role": "system", "content": system_prompt},
                 {
