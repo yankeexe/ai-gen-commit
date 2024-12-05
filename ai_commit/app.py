@@ -25,14 +25,14 @@ class Provider:
     base_url: str | None
 
 
-def get_api_key(remote: bool = False) -> str:
+def get_api_key() -> str:
     """Check if API keys are set in environment variables for remote models.
     If the model is run locally (via Ollama), then the 'ollama' key is returned back.
 
     Returns:
         bool: True if OPENAI_API_KEY environment variable is set, False otherwise.
     """
-    if not remote:
+    if not args.remote:
         return "ollama"
 
     api_key = os.environ.get("OPENAI_API_KEY")
@@ -140,8 +140,8 @@ def parse_host(host: str | None = None) -> str:
     return f"{scheme}://{host}:{port}"
 
 
-def get_llm_provider(remote: bool, api_key: str) -> Provider:
-    if not remote:
+def get_llm_provider(api_key: str) -> Provider:
+    if not args.remote:
         return Provider(
             name="ollama",
             model=get_model(),
@@ -166,9 +166,9 @@ def get_llm_provider(remote: bool, api_key: str) -> Provider:
         )
 
 
-def generate_commit_message(staged_changes: str, remote: bool = False) -> str:
-    api_key = get_api_key(remote)
-    provider = get_llm_provider(remote, api_key)
+def generate_commit_message(staged_changes: str) -> str:
+    api_key = get_api_key()
+    provider = get_llm_provider(api_key)
 
     if args.debug:
         print(f">>> Using {provider.name} with {provider.model}")
@@ -206,7 +206,7 @@ def generate_commit_message(staged_changes: str, remote: bool = False) -> str:
 
 def interaction_loop(staged_changes: str):
     while True:
-        commit_message = generate_commit_message(staged_changes, args.remote)
+        commit_message = generate_commit_message(staged_changes)
 
         action = input("\n\nProceed to commit? [y(yes) | n[no] | r(regenerate)] ")
         action = action.strip()
