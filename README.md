@@ -47,16 +47,16 @@ export OLLAMA_MODEL="llama3.2:3b"
 
 ### 🛜 Remote Mode
 
-To run in remote mode, export your [OpenAI](https://platform.openai.com/api-keys) or [Gemini](https://aistudio.google.com/app/apikey) API keys as:
+To run in remote mode, export your API keys as:
 
 ```sh
-export OPENAI_API_KEY=<openai-or-gemini-api-key>
+export OPENAI_API_KEY=<your-api-key>
 ```
 
 Specify which remote provider to use:
 
 ```sh 
-export AI_COMMIT_PROVIDER="google"
+export AI_COMMIT_PROVIDER="gemini" or "openai" or "togetherai" or "groq" or "deepseek"
 ```
 
 then enable remote mode:
@@ -68,10 +68,12 @@ aic -r
 Specify the model to use based on the provider's API key:
 
 ```sh
-# For OpenAI
+export AI_COMMIT_PROVIDER="openai"
 aic -r -m "gpt-4o-2024-11-20"
 
-# For Gemini
+# ---
+
+export AI_COMMIT_PROVIDER="gemini"
 aic -r -m "gemini-1.5-flash"
 ```
 
