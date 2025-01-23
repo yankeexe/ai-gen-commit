@@ -9,7 +9,7 @@ Use AI to generate commit message for your staged changes.
 
 ## ⚡️ Features
 
-- Use local models (via Ollama) or remote models (OpenAI/Gemini)
+- Use local models (via Ollama) or remote models (with OpenAI API compatible providers like:  'openai', 'groq', 'gemini', 'togetherai', 'deepseek')
 - Use your preferred AI model
 - Regenerate commit messages until you find the perfect one
 - Simple CLI interface with debug mode
@@ -47,12 +47,16 @@ export OLLAMA_MODEL="llama3.2:3b"
 
 ### 🛜 Remote Mode
 
-> ⚠️ Only supports OpenAI and Gemini models for now.
-
 To run in remote mode, export your [OpenAI](https://platform.openai.com/api-keys) or [Gemini](https://aistudio.google.com/app/apikey) API keys as:
 
 ```sh
 export OPENAI_API_KEY=<openai-or-gemini-api-key>
+```
+
+Specify which remote provider to use:
+
+```sh 
+export AI_COMMIT_PROVIDER="google"
 ```
 
 then enable remote mode:
