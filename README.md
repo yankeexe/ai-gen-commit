@@ -9,7 +9,7 @@ Use AI to generate commit message for your staged changes.
 
 ## ⚡️ Features
 
-- Use local models (via Ollama) or remote models (with OpenAI API compatible providers like:  'openai', 'groq', 'gemini', 'togetherai', 'deepseek')
+- Use local models (via Ollama) or remote models (with OpenAI API compatible providers like:  `openai`, `groq`, `gemini`, `togetherai`, `deepseek`)
 - Use your preferred AI model
 - Regenerate commit messages until you find the perfect one
 - Simple CLI interface with debug mode
