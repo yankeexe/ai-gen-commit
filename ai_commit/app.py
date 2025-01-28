@@ -102,11 +102,19 @@ def generate_commit_message_local_model(staged_changes: str):
         print("✨ Generating commit message...")
         print("-" * 50 + "\n")
         commit_message = ""
+        capture = True  # Start capturing initially
         for chunk in stream:
             if chunk["done"] is False:
                 content = chunk["message"]["content"]
                 print(content, end="", flush=True)
-                commit_message += content
+                if "<think>" in content:
+                    capture = False
+                    continue
+                if "</think>" in content:
+                    capture = True
+                    continue
+                if capture:
+                    commit_message += content
 
         return commit_message
     except Exception as e:

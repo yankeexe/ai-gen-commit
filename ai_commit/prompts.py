@@ -17,7 +17,7 @@ Key Guidelines:
 - Return just the commit message, no additional text
 - Don't return more bullet points than required
 
-Output Format:
+Output Format Should Contain:
 Concise Title Summarizing Changes
 
 - Specific change description
