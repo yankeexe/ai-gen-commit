@@ -94,6 +94,17 @@ After commit message is generated, press `e` to edit using the defined `$EDITOR`
 
 Defaults to using `vi`.
 
+### 🤖 Custom commit message format
+
+Users can generate commit messages based on the format and instructions defined in the system prompt.
+
+To use your own system prompt:
+
+1. Create a file on `~/.$HOME/.ai-commit`
+2. Add your system prompt to this file
+
+This system prompt takes precedence over the built-in system prompt.
+
 ## Getting Help
 
 ```sh
