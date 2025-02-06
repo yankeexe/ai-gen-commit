@@ -12,6 +12,7 @@ Use AI to generate commit message for your staged changes.
 - Use local models (via Ollama) or remote models (with OpenAI API compatible providers like:  `openai`, `groq`, `gemini`, `togetherai`, `deepseek`)
 - Use your preferred AI model
 - Regenerate commit messages until you find the perfect one
+- In-place editing of generated commit
 - Simple CLI interface with debug mode
 
 ## ⚡️ Install
@@ -55,7 +56,7 @@ export OPENAI_API_KEY=<your-api-key>
 
 Specify which remote provider to use:
 
-```sh 
+```sh
 export AI_COMMIT_PROVIDER="gemini" or "openai" or "togetherai" or "groq" or "deepseek"
 ```
 
@@ -76,6 +77,22 @@ aic -r -m "gpt-4o-2024-11-20"
 export AI_COMMIT_PROVIDER="gemini"
 aic -r -m "gemini-1.5-flash"
 ```
+
+### 📝 In-place Editing
+
+Set your editor environment variable:
+
+```sh
+export EDITOR=vim
+export EDITOR=nvim
+
+# For VSCode
+export EDITOR='code --wait'
+```
+
+After commit message is generated, press `e` to edit using the defined `$EDITOR`.
+
+Defaults to using `vi`.
 
 ## Getting Help
 
