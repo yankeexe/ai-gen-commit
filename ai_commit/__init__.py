@@ -1,5 +1,4 @@
 import argparse
-
 from dataclasses import dataclass
 
 
@@ -11,7 +10,9 @@ class CLIArgs:
 
 
 parser = argparse.ArgumentParser(
-    description="Generate commit message using AI.", usage="aic [options]"
+    description="Generate commit message using AI.",
+    usage="aic [options]",
+    formatter_class=argparse.RawTextHelpFormatter,
 )
 parser.add_argument(
     "-d",
@@ -24,11 +25,10 @@ parser.add_argument("-m", "--model", help="Ollama model name")
 
 
 remote_model_help = """
-🐙 Use remote model for commit message generation.\n
+🐙 Use remote model for commit message generation.
+Get an API key for OpenAI, Groq, Gemini, TogetherAI, or Deepseek, and export it to use a remote model.
 
-Get either OpenAI or Gemini API keys and export them to use a remote model:
-
-> export OPENAI_API_KEY=<your-openai-or-gemini-api-key>
+> export OPENAI_API_KEY=<your-api-key>
 """
 parser.add_argument(
     "-r", "--remote", help=remote_model_help, default=False, action="store_true"
