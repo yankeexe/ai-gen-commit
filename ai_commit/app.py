@@ -107,6 +107,22 @@ def generate_commit_message(staged_changes: str) -> str:
 
 
 def handle_editing(commit_message: str):
+    """Opens the provided commit message in a text editor for user modification.
+
+    Uses the editor specified by the environment variable `EDITOR`, defaulting to `vi`.
+    Creates a temporary file containing the commit message, opens it in the editor,
+    and reads the modified content from the file after the editor is closed.
+
+    Args:
+        commit_message: The initial commit message to be edited.
+
+    Returns:
+        The updated commit message after editing.
+
+    Raises:
+        SystemExit: If the specified editor is not found or if an error occurs during
+        the editing process.
+    """
     editor_not_found_msg = """
 ❌ {editor} not found in your system.
 Please make sure you have exported $EDITOR in your terminal.
@@ -150,7 +166,7 @@ def interaction_loop(staged_changes: str):
         match action:
             case "r" | "regenerate":
                 subprocess.run(commands["clear_screen"], shell=True)
-                generate_commit_message(staged_changes)
+                commit_message = generate_commit_message(staged_changes)
             case "y" | "yes":
                 print("committing...")
                 res = run_command(commands["commit"], [commit_message])
