@@ -7,7 +7,7 @@ import tempfile
 from openai import OpenAI
 
 from ai_commit import cli_args as args
-from ai_commit.prompts import system_prompt
+from ai_commit.prompts import get_system_prompt
 from ai_commit.providers import get_ai_provider, provider_names
 
 commands = {
@@ -80,7 +80,7 @@ def generate_commit_message(staged_changes: str) -> str:
         stream = client.chat.completions.create(
             model=provider.model,
             messages=[
-                {"role": "system", "content": system_prompt},
+                {"role": "system", "content": get_system_prompt()},
                 {
                     "role": "user",
                     "content": f"Here are the staged changes '''{staged_changes}'''",
