@@ -13,6 +13,7 @@ Use AI to generate commit message for your staged changes.
 - Use your preferred AI model
 - Regenerate commit messages until you find the perfect one
 - In-place editing of generated commit
+- Define your custom commit message format
 - Simple CLI interface with debug mode
 
 ## ⚡️ Install
