@@ -104,7 +104,7 @@ To use your own system prompt:
 1. Create a file on `~/.$HOME/.ai-commit`
 2. Add your system prompt to this file
 
-This system prompt takes precedence over the built-in system prompt.
+This system prompt takes precedence over the [built-in system prompt](https://github.com/yankeexe/ai-gen-commit/blob/5c8b6374752a84046d8ce5d5a78fe0481ce1362d/ai_commit/prompts.py#L3-L29).
 
 ## Getting Help
 
