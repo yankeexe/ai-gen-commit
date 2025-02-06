@@ -1,13 +1,14 @@
 import os
+import shutil
 import subprocess
 import sys
+import tempfile
 
 from openai import OpenAI
 
-from ai_commit.providers import get_ai_provider, provider_names
 from ai_commit import cli_args as args
 from ai_commit.prompts import system_prompt
-
+from ai_commit.providers import get_ai_provider, provider_names
 
 commands = {
     "is_git_repo": "git rev-parse --git-dir",
@@ -105,11 +106,29 @@ def generate_commit_message(staged_changes: str) -> str:
         sys.exit(1)
 
 
+def handle_editing(commit_message: str):
+    editor = os.environ.get("EDITOR", "vi")
+    has_default_editor = shutil.which(editor) is not None
+
+    with tempfile.NamedTemporaryFile(
+        mode="w", delete=False, suffix=".txt"
+    ) as temp_file:
+        temp_file.write(commit_message)
+        temp_file_path = temp_file.name
+
+    try:
+        subprocess.run([editor, temp_file_path], check=True)
+    except subprocess.CalledProcessError as e:
+        print(f"Error opening editor: {e}")
+
+
 def interaction_loop(staged_changes: str):
     while True:
         commit_message = generate_commit_message(staged_changes)
 
-        action = input("\n\nProceed to commit? [y(yes) | n[no] | r(regenerate)] ")
+        action = input(
+            "\n\nProceed to commit? [y(yes) | n[no] | r(regenerate) | e(edit)]"
+        )
         action = action.strip()
 
         match action:
@@ -125,6 +144,8 @@ def interaction_loop(staged_changes: str):
             case "n" | "no":
                 print("\n❌ Discarding AI commit message.")
                 break
+            case "e" | "edit":
+                handle_editing(commit_message)
             case _:
                 print("\n🤖 Invalid action")
                 break
