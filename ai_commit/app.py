@@ -107,8 +107,20 @@ def generate_commit_message(staged_changes: str) -> str:
 
 
 def handle_editing(commit_message: str):
+    editor_not_found_msg = """
+❌ {editor} not found in your system.
+Please make sure you have exported $EDITOR in your terminal.
+The tool tries to use `vi` by default.
+
+Example:
+
+export $EDITOR=vim
+"""
     editor = os.environ.get("EDITOR", "vi")
-    has_default_editor = shutil.which(editor) is not None
+    editor = editor.split()
+    if shutil.which(editor[0]) is None:
+        print(editor_not_found_msg.format(editor=editor))
+        sys.exit(1)
 
     with tempfile.NamedTemporaryFile(
         mode="w", delete=False, suffix=".txt"
@@ -117,24 +129,28 @@ def handle_editing(commit_message: str):
         temp_file_path = temp_file.name
 
     try:
-        subprocess.run([editor, temp_file_path], check=True)
+        subprocess.run(editor + [temp_file_path], check=True)
+        with open(temp_file_path) as temp_file:
+            return temp_file.read()
     except subprocess.CalledProcessError as e:
         print(f"Error opening editor: {e}")
+        os.unlink(temp_file_path)
+        sys.exit(1)
 
 
 def interaction_loop(staged_changes: str):
+    commit_message = generate_commit_message(staged_changes)
     while True:
-        commit_message = generate_commit_message(staged_changes)
 
         action = input(
-            "\n\nProceed to commit? [y(yes) | n[no] | r(regenerate) | e(edit)]"
+            "\n\nProceed to commit? [y(yes) | n[no] | r(regenerate) | e(edit)] "
         )
         action = action.strip()
 
         match action:
             case "r" | "regenerate":
                 subprocess.run(commands["clear_screen"], shell=True)
-                continue
+                generate_commit_message(staged_changes)
             case "y" | "yes":
                 print("committing...")
                 res = run_command(commands["commit"], [commit_message])
@@ -145,7 +161,13 @@ def interaction_loop(staged_changes: str):
                 print("\n❌ Discarding AI commit message.")
                 break
             case "e" | "edit":
-                handle_editing(commit_message)
+                updated_commit_message = handle_editing(commit_message)
+                commit_message = updated_commit_message
+                subprocess.run(commands["clear_screen"], shell=True)
+                print("✨ Updated commit message...")
+                print("-" * 50 + "\n")
+                print(updated_commit_message)
+                continue
             case _:
                 print("\n🤖 Invalid action")
                 break

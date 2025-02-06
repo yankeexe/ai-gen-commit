@@ -1,4 +1,5 @@
 import os
+import sys
 from dataclasses import dataclass
 
 from ai_commit import cli_args as args
@@ -18,7 +19,7 @@ providers_mapping = {
         model=get_model(),
         base_url=parse_host(os.getenv("OLLAMA_HOST")) + "/v1",
     ),
-    "openai": Provider(name="openai", model="gpt-4o"),
+    "openai": Provider(name="openai", model="gpt-4o", base_url=""),
     "groq": Provider(
         name="groq",
         model="llama-3.2-3b-preview",
@@ -40,6 +41,7 @@ providers_mapping = {
         base_url="https://api.deepseek.com",
     ),
 }
+
 
 provider_names = list(providers_mapping.keys())
 

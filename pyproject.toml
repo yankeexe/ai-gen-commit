@@ -22,7 +22,7 @@ classifiers = [
     "Development Status :: 3 - Alpha",
 ]
 dependencies = [
-    "openai==1.55.1"
+    "openai==1.55.3"
 ]
 
 [project.optional-dependencies]

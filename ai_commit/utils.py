@@ -8,7 +8,7 @@ from ai_commit import cli_args as args
 
 def get_model():
     ollama_model = args.model or os.environ.get("OLLAMA_MODEL")
-    if not ollama_model:
+    if not ollama_model and not args.remote:
         print(
             """
 🦙 No Ollama model specified for use.
