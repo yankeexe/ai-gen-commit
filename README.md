@@ -80,6 +80,8 @@ aic -r -m "gemini-1.5-flash"
 
 ### 📝 In-place Editing
 
+[🎥 Watch the Demo](https://www.linkedin.com/feed/update/urn:li:activity:7293488744391675905/)
+
 Set your editor environment variable:
 
 ```sh
