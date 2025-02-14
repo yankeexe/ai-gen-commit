@@ -1,6 +1,7 @@
 from pathlib import Path
+import subprocess
 
-system_prompt = """
+default_system_prompt = """
 You are an expert AI commit message generator specialized in creating concise, informative commit messages that follow best practices in version control.
 
 Your ONLY task is to generate a well-structured commit message based on the provided diff. The commit message must:
@@ -29,24 +30,44 @@ Concise Title Summarizing Changes
 """
 
 
-def get_system_prompt():
+def read_prompt(path: Path) -> str:
+    with open(str(path)) as config_file:
+        return config_file.read()
+
+
+def get_system_prompt() -> str:
     """Gets the system prompt from config file or returns default.
 
-    Checks for a custom system prompt in ~/.ai-commit config file.
-    If the file exists and contains content, returns that as the prompt.
-    Otherwise returns the default system prompt.
+    This function checks for a custom system prompt configuration file in the following
+    order:
+    1. .ai-commit file in the current git worktree root
+    2. .ai-commit file in the user's home directory
+    If neither exists or contains content, returns the default system prompt.
 
     Returns:
         str: The system prompt to use - either custom from config or default
     """
+    # Check for `.ai-commit` file in current git worktree
+    try:
+        git_root = subprocess.check_output(
+            ["git", "rev-parse", "--show-toplevel"],
+            text=True,
+            stderr=subprocess.DEVNULL,
+        ).strip()
+        git_ai_commit_config = Path(git_root) / ".ai-commit"
+    except subprocess.CalledProcessError:
+        pass  # Not in a git repo
+
+    if git_ai_commit_config.exists():
+        git_system_prompt = read_prompt(git_ai_commit_config)
+        if git_system_prompt:
+            return git_system_prompt
+
+    # Check for `.ai-commit` file in users $HOME
     ai_commit_config = Path.home() / ".ai-commit"
-    if not ai_commit_config.exists():
-        return system_prompt
-
-    with open(str(ai_commit_config)) as config_file:
-        config_system_prompt = config_file.read()
-
-        if config_system_prompt:
-            return config_system_prompt
+    if ai_commit_config.exists():
+        global_system_prompt = read_prompt(ai_commit_config)
+        if global_system_prompt:
+            return default_system_prompt
         else:
-            return system_prompt
+            return default_system_prompt

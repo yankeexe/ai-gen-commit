@@ -1,4 +1,5 @@
 import os
+import random
 import shutil
 import subprocess
 import sys
@@ -65,7 +66,7 @@ def run_command(command: list[str] | str, extra_args: list[str] = []):
         sys.exit(1)
 
 
-def generate_commit_message(staged_changes: str) -> str:
+def generate_commit_message(staged_changes: str, regenerate: bool = False) -> str:
     provider = get_ai_provider()
     api_key = get_api_key()
     if not provider:
@@ -74,6 +75,8 @@ def generate_commit_message(staged_changes: str) -> str:
 
     if args.debug:
         print(f">>> Using {provider.name} with {provider.model}")
+
+    temperature = random.uniform(0.3, 0.5) if regenerate else 0
 
     try:
         client = OpenAI(base_url=provider.base_url, api_key=api_key)
@@ -86,7 +89,7 @@ def generate_commit_message(staged_changes: str) -> str:
                     "content": f"Here are the staged changes '''{staged_changes}'''",
                 },
             ],
-            temperature=0,
+            temperature=temperature,
             stream=True,
         )
 
@@ -166,7 +169,9 @@ def interaction_loop(staged_changes: str):
         match action:
             case "r" | "regenerate":
                 subprocess.run(commands["clear_screen"], shell=True)
-                commit_message = generate_commit_message(staged_changes)
+                commit_message = generate_commit_message(
+                    staged_changes, regenerate=True
+                )
             case "y" | "yes":
                 print("committing...")
                 res = run_command(commands["commit"], [commit_message])
