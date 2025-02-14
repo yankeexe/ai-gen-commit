@@ -100,12 +100,17 @@ Defaults to using `vi`.
 
 Users can generate commit messages based on the format and instructions defined in the system prompt.
 
-To use your own system prompt:
+**To define system prompt on project level**
+
+1. Create a `.ai-commit` file in your git repository's root directory (same location as the `.git` folder)
+2. Add your system prompt to this file
+
+**To define a global system prompt**
 
 1. Create a file on `~/.$HOME/.ai-commit`
 2. Add your system prompt to this file
 
-This system prompt takes precedence over the [built-in system prompt](https://github.com/yankeexe/ai-gen-commit/blob/5c8b6374752a84046d8ce5d5a78fe0481ce1362d/ai_commit/prompts.py#L3-L29).
+| Project-level System Prompt > Global System Prompt >  [Built-in system prompt](https://github.com/yankeexe/ai-gen-commit/blob/5c8b6374752a84046d8ce5d5a78fe0481ce1362d/ai_commit/prompts.py#L3-L29).
 
 ## Getting Help
 
