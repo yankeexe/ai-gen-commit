@@ -73,15 +73,18 @@ def generate_commit_message(staged_changes: str, regenerate: bool = False) -> st
         print("❌ No LLM provider found for remote mode.")
         sys.exit(1)
 
-    if args.debug:
-        print(f">>> Using {provider.name} with {provider.model}")
-
+    model = args.model or os.environ.get("AI_COMMIT_MODEL") or provider.models
     temperature = random.uniform(0.3, 0.5) if regenerate else 0
+
+    if args.debug:
+        print(
+            f">>> Using {provider.name} with {model}, using base_url: {provider.base_url}, temperature: {temperature}"
+        )
 
     try:
         client = OpenAI(base_url=provider.base_url, api_key=api_key)
         stream = client.chat.completions.create(
-            model=provider.model,
+            model=model,
             messages=[
                 {"role": "system", "content": get_system_prompt()},
                 {
