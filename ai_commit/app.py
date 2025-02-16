@@ -73,7 +73,7 @@ def generate_commit_message(staged_changes: str, regenerate: bool = False) -> st
         print("❌ No LLM provider found for remote mode.")
         sys.exit(1)
 
-    model = args.model or os.environ.get("AI_COMMIT_MODEL") or provider.models
+    model = args.model or os.environ.get("AI_COMMIT_MODEL") or provider.model
     temperature = random.uniform(0.3, 0.5) if regenerate else 0
 
     if args.debug:
