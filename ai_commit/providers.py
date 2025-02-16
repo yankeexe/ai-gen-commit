@@ -59,7 +59,11 @@ def get_ai_provider() -> Provider | None:
 
 Set one of these providers:
 > export AI_COMMIT_PROVIDER={provider_names}
-> export AI_COMMIT_PROVIDER=deepseek
+> export AI_COMMIT_PROVIDER=groq
+
+# Optional
+> export AI_COMMIT_MODEL=<model-from-provider>
+> export AI_COMMIT_MODEL=qwen-2.5-32b
 
 Get API Keys from one of the these providers and export them to use a remote model:
 > export OPENAI_API_KEY=<your-api-key>
