@@ -66,11 +66,17 @@ then enable remote mode:
 aic -r
 ```
 
-Specify the model to use based on the provider's API key:
+Specify the model to use based on the provider:
 
 ```sh
+export AI_COMMIT_PROVIDER="groq"
+export AI_COMMIT_MODEL="qwen-2.5-32b" # pass the model as env var
+aic -r
+
+# ---
+
 export AI_COMMIT_PROVIDER="openai"
-aic -r -m "gpt-4o-2024-11-20"
+aic -r -m "gpt-4o-2024-11-20" # pass the model as flag
 
 # ---
 
