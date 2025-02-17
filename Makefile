@@ -4,6 +4,10 @@ SHELL :=/bin/bash
 .DEFAULT_GOAL=help
 VENV_DIR = .venv
 PYTHON_VERSION=python3.11
+IMAGE_NAME := ai-gen-commit
+
+build: # Build Docker image
+	@docker build -t ai-gen-commit .
 
 check: # Ruff check
 	@ruff check .
