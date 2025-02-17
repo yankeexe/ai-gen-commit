@@ -40,6 +40,11 @@ providers_mapping = {
         model="deepseek-chat",
         base_url="https://api.deepseek.com",
     ),
+    "qwen": Provider(
+        name="qwen",
+        model="qwen2.5-7b-instruct",
+        base_url="https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+    ),
     "custom": Provider(
         name=os.environ.get("AI_COMMIT_PROVIDER"),
         model=os.environ.get("AI_COMMIT_MODEL"),
