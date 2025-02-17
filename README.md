@@ -86,7 +86,7 @@ aic -r -m "gemini-1.5-flash"
 
 ### ✨ Bring your own Provider
 
-You can use any OPENAPI compatible provider/server for commit generation.
+You can use any OPEN AI compatible provider/server for commit generation.
 
 ```sh
 export AI_COMMIT_PROVIDER=custom # should be set to custom
