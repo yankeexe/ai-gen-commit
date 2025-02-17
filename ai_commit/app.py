@@ -30,7 +30,8 @@ def get_api_key() -> str:
         return "ollama"
 
     api_key = os.environ.get("OPENAI_API_KEY")
-    if not api_key:
+    provider = os.environ.get("AI_COMMIT_PROVIDER")
+    if provider != "custom" and not api_key:
         print(
             f"""
 🔑 No API Key set to use a remote model.
@@ -80,7 +81,6 @@ def generate_commit_message(staged_changes: str, regenerate: bool = False) -> st
         print(
             f">>> Using {provider.name} with {model}, using base_url: {provider.base_url}, temperature: {temperature}"
         )
-
     try:
         client = OpenAI(base_url=provider.base_url, api_key=api_key)
         stream = client.chat.completions.create(
