@@ -9,7 +9,7 @@ Use AI to generate commit message for your staged changes.
 
 ## ⚡️ Features
 
-- Use local models (via Ollama) or remote models (with OpenAI API compatible providers like:  `openai`, `groq`, `gemini`, `togetherai`, `deepseek`)
+- Use local models (via Ollama) or remote models (with OpenAI API compatible providers like:  `openai`, `groq`, `gemini`, `togetherai`, `deepseek`) or your custom provider.
 - Regenerate commit messages until you find the perfect one
 - In-place editing of generated commit
 - Define your custom commit message format
@@ -82,6 +82,17 @@ aic -r -m "gpt-4o-2024-11-20" # pass the model as flag
 
 export AI_COMMIT_PROVIDER="gemini"
 aic -r -m "gemini-1.5-flash"
+```
+
+### ✨ Bring your own Provider
+
+You can use any OPENAPI compatible provider/server for commit generation.
+
+```sh
+export AI_COMMIT_PROVIDER=custom # should be set to custom
+export AI_COMMIT_MODEL=llama3.2:3b # example
+export AI_COMMIT_PROVIDER_BASE_URL=http://localhost:11434/v1 # example
+export OPENAI_API_KEY=<your-api-key> # if your custom provider requires one
 ```
 
 ### 📝 In-place Editing
