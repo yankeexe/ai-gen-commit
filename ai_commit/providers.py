@@ -40,6 +40,11 @@ providers_mapping = {
         model="deepseek-chat",
         base_url="https://api.deepseek.com",
     ),
+    "custom": Provider(
+        name=os.environ.get("AI_COMMIT_PROVIDER"),
+        model=os.environ.get("AI_COMMIT_MODEL"),
+        base_url=os.environ.get("AI_COMMIT_PROVIDER_BASE_URL"),
+    ),
 }
 
 
