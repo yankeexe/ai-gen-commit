@@ -45,6 +45,9 @@ providers_mapping = {
         model="qwen2.5-7b-instruct",
         base_url="https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
     ),
+    "mistral": Provider(
+        name="mistral", model="ministral-3b-2410", base_url="https://api.mistral.ai/v1"
+    ),
     "custom": Provider(
         name=os.environ.get("AI_COMMIT_PROVIDER"),
         model=os.environ.get("AI_COMMIT_MODEL"),
