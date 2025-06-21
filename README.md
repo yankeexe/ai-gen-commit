@@ -57,7 +57,7 @@ export OPENAI_API_KEY=<your-api-key>
 Specify which remote provider to use:
 
 ```sh
-export AI_COMMIT_PROVIDER="gemini" or "openai" or "togetherai" or "groq" or "deepseek"
+export AI_COMMIT_PROVIDER="gemini" or "openai" or "togetherai" or "groq" or "deepseek" or "mistral"
 ```
 
 then enable remote mode:
