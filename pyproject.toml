@@ -7,7 +7,7 @@ include = ["ai_commit"]
 
 [project]
 name = "ai-gen-commit"
-version = "0.0.10"
+version = "0.0.11"
 authors = [
     { name = "Yankee Maharjan" },
 ]
@@ -19,15 +19,16 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Intended Audience :: Developers",
-    "Development Status :: 3 - Alpha",
-]
-dependencies = [
-    "openai==1.55.3"
+    "Development Status :: 4 - Beta",
 ]
 
-[project.optional-dependencies]
+dependencies = [
+    "openai==1.90.0",
+]
+
+[dependency-groups]
 dev = [
-    "ruff==0.7.4"
+    "ruff==0.12.0",
 ]
 
 [project.urls]
@@ -35,3 +36,4 @@ Repository = "https://github.com/yankeexe/ai-gen-commit"
 
 [project.scripts]
 aic = "ai_commit.app:run"
+
