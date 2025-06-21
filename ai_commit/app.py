@@ -71,7 +71,7 @@ def generate_commit_message(staged_changes: str, regenerate: bool = False) -> st
     provider = get_ai_provider()
     api_key = get_api_key()
     if not provider:
-        print("❌ No LLM provider found for remote mode.")
+        print("❌ No LLM provider found for remote model.")
         sys.exit(1)
 
     model = args.model or os.environ.get("AI_COMMIT_MODEL") or provider.model
