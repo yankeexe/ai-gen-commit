@@ -7,7 +7,7 @@ include = ["ai_commit"]
 
 [project]
 name = "ai-gen-commit"
-version = "0.0.11"
+version = "0.1.0"
 authors = [
     { name = "Yankee Maharjan" },
 ]
