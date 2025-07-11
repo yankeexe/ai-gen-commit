@@ -23,7 +23,7 @@ classifiers = [
 ]
 
 dependencies = [
-    "openai==1.93.3",
+    "openai==1.95.0",
 ]
 
 [dependency-groups]
