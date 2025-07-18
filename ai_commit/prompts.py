@@ -32,7 +32,7 @@ Concise Title Summarizing Changes
 
 def read_prompt(path: Path) -> str:
     with open(str(path)) as config_file:
-        return config_file.read()
+        return config_file.read().strip()
 
 
 def get_system_prompt() -> str:
