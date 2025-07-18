@@ -55,19 +55,18 @@ def get_system_prompt() -> str:
             stderr=subprocess.DEVNULL,
         ).strip()
         git_ai_commit_config = Path(git_root) / ".ai-commit"
+        if git_ai_commit_config.exists():
+            git_system_prompt = read_prompt(git_ai_commit_config)
+            if git_system_prompt:
+                return git_system_prompt
     except subprocess.CalledProcessError:
         pass  # Not in a git repo
-
-    if git_ai_commit_config.exists():
-        git_system_prompt = read_prompt(git_ai_commit_config)
-        if git_system_prompt:
-            return git_system_prompt
 
     # Check for `.ai-commit` file in users $HOME
     ai_commit_config = Path.home() / ".ai-commit"
     if ai_commit_config.exists():
         global_system_prompt = read_prompt(ai_commit_config)
         if global_system_prompt:
-            return default_system_prompt
-        else:
-            return default_system_prompt
+            return global_system_prompt
+
+    return default_system_prompt
