@@ -9,14 +9,14 @@ from ai_commit.utils import get_model, parse_host
 @dataclass
 class Provider:
     name: str
-    model: str
+    model: str | None
     base_url: str
 
 
 providers_mapping = {
     "ollama": Provider(
         name="ollama",
-        model=get_model(),
+        model=None,
         base_url=parse_host(os.getenv("OLLAMA_HOST")) + "/v1",
     ),
     "openai": Provider(name="openai", model="gpt-4o", base_url=""),
@@ -61,10 +61,12 @@ provider_names = list(providers_mapping.keys())
 
 def get_ai_provider() -> Provider | None:
     if not args.remote:
-        return providers_mapping["ollama"]
+        provider = providers_mapping["ollama"]
+        if provider.model is None:
+            provider.model = get_model()
+        return provider
 
     ai_provider = os.environ.get("AI_COMMIT_PROVIDER")
-    ai_provider = ai_provider.lower() if ai_provider else None
     if not ai_provider:
         print(
             f"""
@@ -84,4 +86,18 @@ Get API Keys from one of the these providers and export them to use a remote mod
         )
         sys.exit(1)
 
-    return providers_mapping.get(ai_provider)
+    provider = providers_mapping.get(ai_provider.lower())
+    if not provider.model:
+        print(
+            f"""
+❌ No model name set for the provider: {provider.name}
+
+Set model name using:
+    export AI_COMMIT_MODEL=<model-from-provider>
+OR 
+    aic -m <model-from-provider>
+                    """
+        )
+        sys.exit(1)
+
+    return providers_mapping.get(ai_provider.lower())

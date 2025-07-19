@@ -4,10 +4,11 @@ import shutil
 import subprocess
 import sys
 import tempfile
+from importlib.metadata import PackageNotFoundError, version as package_version
 
 from openai import OpenAI
 
-from ai_commit import cli_args as args
+from ai_commit import CLIArgs, cli_args as args
 from ai_commit.prompts import get_system_prompt
 from ai_commit.providers import get_ai_provider, provider_names
 
@@ -19,7 +20,7 @@ commands = {
 }
 
 
-def get_api_key() -> str:
+def get_api_key() -> str | None:
     """Check if API keys are set in environment variables for remote models.
     If the model is run locally (via Ollama), then the 'ollama' key is returned back.
 
@@ -108,7 +109,7 @@ def generate_commit_message(staged_changes: str, regenerate: bool = False) -> st
 
         return commit_message
     except Exception as e:
-        print(f"❌ Error generating commit message: {str(e)}")
+        print(f"❌ Error generating commit message:\n{str(e)}")
         sys.exit(1)
 
 
@@ -163,7 +164,6 @@ export $EDITOR=vim
 def interaction_loop(staged_changes: str):
     commit_message = generate_commit_message(staged_changes)
     while True:
-
         action = input(
             "\n\nProceed to commit? [y(yes) | n[no] | r(regenerate) | e(edit)] "
         )
@@ -197,8 +197,29 @@ def interaction_loop(staged_changes: str):
                 break
 
 
+def get_version() -> str:
+    try:
+        version = package_version("ai-gen-commit")
+    except PackageNotFoundError:
+        version = "unknown"
+    return version
+
+
+def handle_subcommand(cli_args: CLIArgs):
+    if cli_args.command and (cli_args.model or cli_args.debug or cli_args.remote):
+        print(
+            f"❌ Error: cannot use subcommand {cli_args.command} and other flags together"
+        )
+        sys.exit(1)
+
+    if cli_args.command == "version":
+        print(get_version())
+        sys.exit(0)
+
+
 def run():
     try:
+        handle_subcommand(args)
         run_command(commands["is_git_repo"])
         staged_changes = run_command(commands["get_stashed_changes"])
 
