@@ -28,7 +28,7 @@ dependencies = [
 
 [dependency-groups]
 dev = [
-    "ruff==0.12.8",
+    "ruff==0.12.9",
 ]
 
 [project.urls]
