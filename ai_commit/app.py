@@ -33,15 +33,13 @@ def get_api_key() -> str | None:
     api_key = os.environ.get("OPENAI_API_KEY")
     provider = os.environ.get("AI_COMMIT_PROVIDER")
     if provider != "custom" and not api_key:
-        print(
-            f"""
+        print(f"""
 🔑 No API Key set to use a remote model.
 
 Get API keys for {provider_names} and export them to use a remote model:
 
 > export OPENAI_API_KEY=<your-api-key>
-"""
-        )
+""")
         sys.exit(1)
 
     return api_key
@@ -168,6 +166,9 @@ export $EDITOR=vim
 
 def interaction_loop(staged_changes: str):
     commit_message = generate_commit_message(staged_changes)
+    if args.generate_only:
+        print("\n")
+        return
     while True:
         action = input(
             "\n\nProceed to commit? [y(yes) | n[no] | r(regenerate) | e(edit)] "
@@ -211,7 +212,9 @@ def get_version() -> str:
 
 
 def handle_subcommand(cli_args: CLIArgs):
-    if cli_args.command and (cli_args.model or cli_args.debug or cli_args.remote):
+    if cli_args.command and (
+        cli_args.model or cli_args.debug or cli_args.remote or cli_args.generate_only
+    ):
         print(
             f"❌ Error: cannot use subcommand {cli_args.command} and other flags together"
         )

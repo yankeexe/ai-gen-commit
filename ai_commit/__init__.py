@@ -7,6 +7,7 @@ from typing import Annotated
 class CLIArgs:
     remote: Annotated[bool, "Use remote model for commit generation"]
     debug: Annotated[bool, "Run the CLI in debug mode"]
+    generate_only: Annotated[bool, "Generate the commit message and stop without prompting"]
     model: Annotated[str | None, "Model to use for commit generation"] = None
     command: Annotated[str | None, "Sub-command passed to the CLI"] = None
 
@@ -35,6 +36,13 @@ Get an API key for OpenAI, Groq, Gemini, TogetherAI, or Deepseek, and export it 
 parser.add_argument(
     "-r", "--remote", help=remote_model_help, default=False, action="store_true"
 )
+parser.add_argument(
+    "-g",
+    "--generate-only",
+    help="Generate the commit message and stop without any interaction",
+    default=False,
+    action="store_true",
+)
 
 
 version_parser = parser.add_subparsers(title="version", dest="command")
@@ -45,6 +53,7 @@ raw_args = parser.parse_args()
 cli_args = CLIArgs(
     remote=raw_args.remote,
     debug=raw_args.debug,
+    generate_only=raw_args.generate_only,
     model=raw_args.model,
     command=raw_args.command,
 )
