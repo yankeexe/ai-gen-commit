@@ -102,7 +102,12 @@ def generate_commit_message(staged_changes: str, regenerate: bool = False) -> st
         commit_message = ""
 
         for chunk in stream:
-            content = chunk.choices[0].delta.content
+            if not chunk.choices:
+                continue
+            delta = chunk.choices[0].delta
+            if delta is None or delta.content is None:
+                continue
+            content = delta.content
             if content:
                 print(content, end="", flush=True)
                 commit_message += content
